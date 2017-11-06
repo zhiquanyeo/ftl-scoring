@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Scoring Dashboard</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="container-fluid">
+      <div class="row">
+        
+        <div class="col-md-12 main">
+          <h1 class="page-header">Scoreboard</h1>
+
+          <h2 class="sub-header">Match Scores</h2>
+          <div class="table-responsive">
+            <table class="table table-striped" id="scoreboard">
+              <thead>
+                <tr>
+                  <th>Match #</th>
+                  <th class="red-team">Red Team 1</th>
+                  <th class="red-team">Red Team 2</th>
+                  <th class="blue-team">Blue Team 1</th>
+                  <th class="blue-team">Blue Team 2</th>
+                  <th class="red-team">Red Score</th>
+                  <th class="blue-team">Blue Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td class="red-team">Tiny Hands</td>
+                  <td class="red-team">Janky Ipswitch</td>
+                  <td class="blue-team">Carboard Havoc</td>
+                  <td class="blue-team">Cray Cray</td>
+                  <td>0</td>
+                  <td>0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script src="js/scoreboard.js"></script>
+  </body>
+</html>

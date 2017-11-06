@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Scoring Admin</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 main">
+                    <h1 class="page-header">Tournament Administration</h1>
+            </div>
+        </div>
+        <div class="row bg-info">
+            <div class="col-md-12">
+                <h3>Current Match</h3>
+                <div class="row bg-info">
+                    <div class="col-sm-5">
+                        <select id="match-selector" class="form-control">
+                            <option>NONE</option>
+                            <option>2</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="button" class="btn btn-primary">Select Match</button>
+                    </div>
+                </div>
+                <!-- Shown if the current match is NONE -->
+                <div class="row bg-info" id="no-match-selected">
+    
+                </div>
+    
+                <!-- Shown if the current match is selected -->
+                <div class="row bg-info" id="match-selected">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <h4 id="match-complated-label">Match Complete</h4>
+                                <!-- This should switch to red when the match is active -->
+                                <button id="active-match-button" type="button" class="btn btn-primary">Make Active Match</button>    
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h5>Scoring</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped" id="match-scoring-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Team</th>
+                                                <th>Auto Score</th>
+                                                <th>Teleop Score</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="red-team">Red Team</td>
+                                                <td id="red-auto-score">0</td>
+                                                <td id="red-teleop-score">0</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="blue-team">Blue Team</td>
+                                                <td id="blue-auto-score">0</td>
+                                                <td id="blue-teleop-score">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div id="scoreLog" class="col-sm-12">
+                                        <h5>Score Log</h5>
+                                        <ul class="list-group" style="max-height: 100px; overflow-y: scroll">
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                            <li class="list-group-item">Hi</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>Score Adjustment</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="red-team">Red Team Score Adjustment</h6>
+                                <div class="form-inline">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" id="red-score-adjust-value" placeholder="Score Adjustment">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" id="red-score-adjust-description" placeholder="Description">
+                                    </div>
+                                    <button class="btn btn-danger">Adjust Red Score</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="blue-team">Blue Team Score Adjustment</h6>
+                                <div class="form-inline">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" id="blue-score-adjust-value" placeholder="Score Adjustment">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" id="blue-score-adjust-description" placeholder="Description">
+                                    </div>
+                                    <button class="btn btn-primary">Adjust Blue Score</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-top: 10px; padding-bottom: 10px">
+                            <div class="col-md-2">
+                                <button class="btn btn-success" id="complete-match-button">Complete Match</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Tournament Setup</h3>
+                <h4>Current Matches</h4>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="match-list">
+                                <thead>
+                                <tr>
+                                    <th>Match #</th>
+                                    <th class="red-team">Red Teams</th>
+                                    <th class="blue-team">Blue Teams</th>
+                                    <th class="red-team">Red Score</th>
+                                    <th class="blue-team">Blue Score</th>
+                                    <th>Complete</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Q1</td>
+                                    <td class="red-team">Tiny Hands, Janky Ipswitch</td>
+                                    <td class="blue-team">Cardboard Havoc, Cray Cray</td>
+                                    <td class="red-team">0</td>
+                                    <td class="blue-team">0</td>
+                                    <td>false</td>
+                                    <td><button class="btn btn-danger btn-xs">Delete</button></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h4>Add Match</h4>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-inline">
+                                    <div class="form-group">
+                                        <input id="add-match-number" placeholder="Match Number">
+                                    </div>
+                                    <div class="form-group">
+                                        <input id="add-match-red-teams" placeholder="Red Teams ; separated">
+                                    </div>
+                                    <div class="form-group">
+                                        <input id="add-match-blue-teams" placeholder="Blue Teams ; separated">
+                                    </div>
+                                    <button class="btn btn-primary" id="add-match-button">Add Match</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h4>Bulk Upload Match</h4>
+                        <p>Upload a JSON string representing match information and optional scoring information. This will clear all matches currently set.</p>
+                        <textarea id="bulk-upload-match" class="form-control" style="height: 5em"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <button class="btn btn-primary">Upload</button>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 10px"></div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+  </body>
+</html>

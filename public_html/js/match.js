@@ -106,6 +106,7 @@ socket.on('teleopModeFinished', function () {
 });
 
 socket.on('matchScoreChanged', function (matchName, scores) {
+    console.log('scores: ', scores);
     var redScoreVal = scores.red.auto + scores.red.teleop + scores.red.other + scores.blue.fouls + scores.blue.techFouls;
     var blueScoreVal = scores.blue.auto + scores.blue.teleop + scores.blue.other + scores.red.fouls + scores.red.techFouls;
     

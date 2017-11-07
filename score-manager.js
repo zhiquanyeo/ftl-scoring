@@ -215,12 +215,16 @@ class ScoreManager extends EventEmitter {
                 red: {
                     auto: matchInfo.redAutoScore,
                     teleop: matchInfo.redTeleopScore,
-                    other: matchInfo.redOtherScore
+                    other: matchInfo.redOtherScore,
+                    fouls: matchInfo.redFouls,
+                    techFouls: matchInfo.redTechFouls
                 },
                 blue: {
                     auto: matchInfo.blueAutoScore,
                     teleop: matchInfo.blueTeleopScore,
-                    other: matchInfo.blueOtherScore
+                    other: matchInfo.blueOtherScore,
+                    fouls: matchInfo.blueFouls,
+                    techFouls: matchInfo.blueTechFouls
                 },
             };
         }

@@ -11,9 +11,6 @@ class ScoreManager extends EventEmitter {
         this.d_currentMatch = 'NONE'; // It's a string...
         this.d_matches = []; // A struct of { matchName, redTeams, blueTeams, redScore, blueScore, complete, active, scoreLog}
 
-        this.d_currentMatchRedScore = 0;
-        this.d_currentMatchBlueScore = 0;
-
         this.d_currentMatchRedScores = {
             auto: {},
             teleop: 0,
@@ -43,6 +40,10 @@ class ScoreManager extends EventEmitter {
 
         // Send a registration message to the socket
         socket.emit('scorerRegistration', scorerId);
+
+        if (this.getActiveMatch()) {
+            socket.emit('activeMatchChanged', this.getActiveMatchName());
+        }
 
         // Hook up events
         socket.on('autoScore', (autoScoreData) => {
@@ -74,6 +75,13 @@ class ScoreManager extends EventEmitter {
                 }
 
                 activeMatchInfo.redAutoScore = redScore;
+
+                activeMatchInfo.scoreLog.push({
+                    team: 'red',
+                    type: 'auto',
+                    score: redScore,
+                    timestamp: Date.now()
+                });
             }
             else {
                 this.d_currentMatchBlueScores.auto = autoScoreData;
@@ -98,9 +106,18 @@ class ScoreManager extends EventEmitter {
                 }
 
                 activeMatchInfo.blueAutoScore = blueScore;
+
+                activeMatchInfo.scoreLog.push({
+                    team: 'blue',
+                    type: 'auto',
+                    score: blueScore,
+                    timestamp: Date.now()
+                });
             }
 
-            this.emit('matchScoreChanged', activeMatchInfo.matchName, this.getMatchScore(activeMatchInfo.matchName));
+            this.emit('matchScoreChanged', activeMatchInfo.matchName, 
+                        this.getMatchScore(activeMatchInfo.matchName),
+                        activeMatchInfo.scoreLog);
             socket.broadcast.emit('autoScoreChanged', autoScoreData);
         });
 
@@ -117,7 +134,16 @@ class ScoreManager extends EventEmitter {
                 activeMatchInfo.blueTeleopScore += pointVal;
             }
 
-            this.emit('matchScoreChanged', activeMatchInfo.matchName, this.getMatchScore(activeMatchInfo.matchName));
+            activeMatchInfo.scoreLog.push({
+                team: team,
+                type: 'teleop',
+                score: pointVal,
+                timestamp: Date.now()
+            });
+
+            this.emit('matchScoreChanged', activeMatchInfo.matchName, 
+                        this.getMatchScore(activeMatchInfo.matchName),
+                        activeMatchInfo.scoreLog);
         });
 
         socket.on('foulPoint', (pointVal) => {
@@ -133,7 +159,16 @@ class ScoreManager extends EventEmitter {
                 activeMatchInfo.blueFouls += pointVal;
             }
 
-            this.emit('matchScoreChanged', activeMatchInfo.matchName, this.getMatchScore(activeMatchInfo.matchName));
+            activeMatchInfo.scoreLog.push({
+                team: team,
+                type: 'foul',
+                score: pointVal,
+                timestamp: Date.now()
+            });
+
+            this.emit('matchScoreChanged', activeMatchInfo.matchName, 
+                        this.getMatchScore(activeMatchInfo.matchName),
+                        activeMatchInfo.scoreLog);
         });
 
         socket.on('techFoulPoint', (pointVal) => {
@@ -149,7 +184,16 @@ class ScoreManager extends EventEmitter {
                 activeMatchInfo.blueTechFouls += pointVal;
             }
 
-            this.emit('matchScoreChanged', activeMatchInfo.matchName, this.getMatchScore(activeMatchInfo.matchName));
+            activeMatchInfo.scoreLog.push({
+                team: team,
+                type: 'tech foul',
+                score: pointVal,
+                timestamp: Date.now()
+            });
+
+            this.emit('matchScoreChanged', activeMatchInfo.matchName, 
+                            this.getMatchScore(activeMatchInfo.matchName),
+                            activeMatchInfo.scoreLog);
         });
 
     }
@@ -275,6 +319,15 @@ class ScoreManager extends EventEmitter {
                 matchInfo.active = true;
 
                 this.emit('activeMatchChanged', matchName);
+
+                // Tell the scoring applications
+                for (var i = 0; i < this.d_blueScorers.length; i++) {
+                    this.d_blueScorers[i].socket.emit('activeMatchChanged', matchName);
+                }
+
+                for (var i = 0; i < this.d_redScorers.length; i++) {
+                    this.d_redScorers[i].socket.emit('activeMatchChanged', matchName);
+                }
             }
         }
     }

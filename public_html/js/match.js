@@ -12,6 +12,11 @@ var matchProgressTime = document.getElementById('match-time-remaining');
 var redScore = document.getElementById('red-score');
 var blueScore = document.getElementById('blue-score');
 
+var redFoulsLabel = document.getElementById('red-fouls');
+var redTechFoulsLabel = document.getElementById('red-tech-fouls');
+var blueFoulsLabel = document.getElementById('blue-fouls');
+var blueTechFoulsLabel = document.getElementById('blue-tech-fouls');
+
 var socket = io('/match');
 
 var AUTO_TIME = 30;
@@ -72,6 +77,7 @@ socket.on('activeMatchChanged', function(matchInfo) {
 });
 
 socket.on('timeRemaining', function (timeInfo) {
+    console.log('time: ', timeInfo);
     var timeElapsed = 0;
     if (timeInfo.mode === 'auto') {
         _resetProgressBar();
@@ -112,6 +118,11 @@ socket.on('matchScoreChanged', function (matchName, scores) {
     
     redScore.innerHTML = redScoreVal;
     blueScore.innerHTML = blueScoreVal;
+
+    redFoulsLabel.innerHTML = 'Red Fouls: ' + scores.red.fouls;
+    redTechFoulsLabel.innerHTML = 'Red Tech Fouls: ' + scores.red.techFouls;
+    blueFoulsLabel.innerHTML = 'Blue Fouls: ' + scores.blue.fouls;
+    blueTechFoulsLabel.innerHTML = 'Blue Tech Fouls: ' + scores.blue.techFouls;
 });
 
 });

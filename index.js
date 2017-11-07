@@ -79,6 +79,14 @@ adminSocket.on('connection', (socket) => {
 
     socket.emit('matchData', matchData);
 
+    if (scoreManager.getActiveMatch()) {
+        // update the score
+        var matchInfo = scoreManager.getActiveMatch();
+        socket.emit('matchScoreChanged', matchInfo.matchName,
+                    scoreManager.getMatchScore(matchInfo.matchName),
+                    matchInfo.scoreLog);
+    }
+
     socket.on('matchActivated', (matchName) => {
         scoreManager.setActiveMatch(matchName);
         socket.broadcast.emit('matchActivated', matchName);
@@ -159,7 +167,9 @@ function _broadcastModeTime(mode, timeString, timeSeconds) {
             mode: mode,
             timeRemaining: timeString
         });
+    }
 
+    for (var i = 0; i < matchClients.length; i++) {
         matchClients[i].emit('timeRemaining', {
             mode: mode,
             timeRemaining: timeString,
@@ -184,17 +194,17 @@ function _broadcastActiveMatchUpdated() {
     }
 }
 
-function _broadcastMatchScores(matchName, scores) {
+function _broadcastMatchScores(matchName, scores, scoreLog) {
     for (var i = 0; i < matchClients.length; i++) {
-        matchClients[i].emit('matchScoreChanged', matchName, scores);
+        matchClients[i].emit('matchScoreChanged', matchName, scores, scoreLog);
     }
 
     for (var i = 0; i < displayClients.length; i++) {
-        displayClients[i].emit('matchScoreChanged', matchName, scores);
+        displayClients[i].emit('matchScoreChanged', matchName, scores, scoreLog);
     }
 
     for (var i = 0; i < adminClients.length; i++) {
-        adminClients[i].emit('matchScoreChanged', matchName, scores);
+        adminClients[i].emit('matchScoreChanged', matchName, scores, scoreLog);
     }
 }
 
@@ -221,8 +231,8 @@ scoreManager.on('activeMatchChanged', (matchName) => {
     _broadcastActiveMatchUpdated();
 });
 
-scoreManager.on('matchScoreChanged', (matchName, score) => {
-    _broadcastMatchScores(matchName, score);
+scoreManager.on('matchScoreChanged', (matchName, score, scoreLog) => {
+    _broadcastMatchScores(matchName, score, scoreLog);
 
     // Also update dashboard
     var matchData = {

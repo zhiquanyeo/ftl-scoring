@@ -13,9 +13,13 @@ var matchModeTimeRemaining = document.getElementById('match-mode-time-remaining'
 
 var redAutoScore = document.getElementById('red-auto-score');
 var redTeleopScore = document.getElementById('red-teleop-score');
+var redOthersScore = document.getElementById('red-others-score');
+var redFoulsScore = document.getElementById('red-fouls-score');
 var redTotalScore = document.getElementById('red-total-score');
 var blueAutoScore = document.getElementById('blue-auto-score');
 var blueTeleopScore = document.getElementById('blue-teleop-score');
+var blueOthersScore = document.getElementById('blue-others-score');
+var blueFoulsScore = document.getElementById('blue-fouls-score');
 var blueTotalScore = document.getElementById('blue-total-score');
 
 var scoreLog = document.getElementById('score-log');
@@ -69,6 +73,10 @@ function _clearMatchInfo() {
     blueAutoScore.innerHTML = '0';
     blueTeleopScore.innerHTML = '0';
     blueTotalScore.innerHTML = '0';
+    redOthersScore.innerHTML = '0';
+    blueOthersScore.innerHTML = '0';
+    redFoulsScore.innerHTML = '0';
+    blueFoulsScore.innerHTML = '0';
     scoreLog.innerHTML = '';
 }
 
@@ -325,5 +333,49 @@ socket.on('teleopModeFinished', function () {
     matchModeLabel.innerHTML = '';
     matchModeTimeRemaining.innerHTML = '';
 });
+
+socket.on('matchScoreChanged', function (matchName, scores, log) {
+    var redScoreVal = scores.red.auto + scores.red.teleop + scores.red.other + scores.blue.fouls + scores.blue.techFouls;
+    var blueScoreVal = scores.blue.auto + scores.blue.teleop + scores.blue.other + scores.red.fouls + scores.red.techFouls;
+    
+    redAutoScore.innerHTML = scores.red.auto;
+    blueAutoScore.innerHTML = scores.blue.auto;
+
+    redTeleopScore.innerHTML = scores.red.teleop;
+    blueTeleopScore.innerHTML = scores.blue.teleop;
+
+    redFoulsScore.innerHTML = scores.red.fouls + scores.red.techFouls;
+    blueFoulsScore.innerHTML = scores.blue.fouls + scores.blue.techFouls;
+
+    redOthersScore.innerHTML = scores.red.other;
+    blueOthersScore.innerHTML = scores.blue.other;
+
+    redTotalScore.innerHTML = redScoreVal;
+    blueTotalScore.innerHTML = blueScoreVal;
+
+    // Update the score log, in reverse
+    scoreLog.innerHTML = '';
+    for (var i = log.length - 1; i >= 0; i--) {
+        var data = log[i];
+        var entry = document.createElement('li');
+        entry.classList.add('list-group-item');
+
+        var str = '<span style="color: ' + data.team + ';">' + data.team + 
+                  '</span> ';
+        if (data.type === 'auto') {
+            str += "updated auto points to " + data.score;
+        }
+        else if (data.type === "teleop") {
+            str += "scored " + data.score + " teleop points";
+        }
+        else {
+            str += "received a " + data.type + " costing " + data.score + " points";
+        }
+
+        entry.innerHTML = str;
+        scoreLog.appendChild(entry);
+    }
+
+})
 
 });

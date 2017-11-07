@@ -193,6 +193,14 @@ socket.on('scorerRegistration', function(id) {
     scorerId.innerHTML = 'Scorer ID: ' + id;
 });
 
+socket.on('matchInfo', function (matchInfo) {
+    matchHeader.innerHTML = 'Match: ' + matchInfo.matchName;
+});
+
+socket.on('activeMatchChanged', function (matchName) {
+    matchHeader.innerHTML = 'Match: ' + matchName;
+});
+
 _resetScreen();
 
 });

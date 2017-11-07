@@ -26,6 +26,7 @@ var matchClients = [];
 
 // TODO Read in configuration from DB?
 
+app.set('port', (process.env.PORT || 3000));
 
 // Initialize Score and Match managers
 var scoreManager = new ScoreManager();
@@ -239,6 +240,6 @@ scoreManager.addMatch("Q3", ["red 1", "red 2"], ["blue 1", "blue 2"]);
 scoreManager.addMatch("Q4", ["red 1", "red 2"], ["blue 1", "blue 2"]);
 scoreManager.addMatch("Q5", ["red 1", "red 2"], ["blue 1", "blue 2"]);
 
-http.listen(3000, () => {
-    console.log('Listening');
+http.listen(app.get('port'), () => {
+    console.log('Listening on *:' + app.get('port'));
 })

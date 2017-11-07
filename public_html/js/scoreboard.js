@@ -46,11 +46,13 @@ socket.on('matchData', function (matchData) {
 
             var redScore = newRow.insertCell();
             redScore.classList.add('red-team');
-            redScore.innerHTML = matchInfo.redScore || 0;
+            var redScoreVal = matchInfo.redAutoScore + matchInfo.redTeleopScore + matchInfo.redOtherScore;
+            redScore.innerHTML = redScoreVal;
 
             var blueScore = newRow.insertCell();
             blueScore.classList.add('blue-team');
-            blueScore.innerHTML = matchInfo.blueScore || 0;
+            var blueScoreVal = matchInfo.blueAutoScore + matchInfo.blueTeleopScore + matchInfo.blueOtherScore;
+            blueScore.innerHTML = matchInfo.blueScoreVal;
         }
     }
 });

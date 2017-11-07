@@ -21,6 +21,7 @@ var displaySocket = io.of(DISPLAY_CHANNEL);
 var matchSocket = io.of(MATCH_CHANNEL);
 
 var displayClients = [];
+var adminClients = [];
 
 // TODO Read in configuration from DB?
 
@@ -58,7 +59,33 @@ app.get('/blue', (req, res) => {
 
 // Hook up socket.io connections
 adminSocket.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+        for (var i = 0; i < adminClients.length; i++) {
+            if (adminClients[i] === socket)  {
+                adminClients.splice(i, 1);
+                break;
+            }
+        }
+    });
 
+    adminClients.push(socket);
+
+    var matchData = {
+        activeMatch: scoreManager.getActiveMatchName(),
+        matchList: scoreManager.getMatchList()
+    };
+
+    socket.emit('matchData', matchData);
+
+    socket.on('matchActivated', (matchName) => {
+        scoreManager.setActiveMatch(matchName);
+        socket.broadcast.emit('matchActivated', matchName);
+    });
+
+    socket.on('autoModeStarted', function () {
+        scoreManager.startAutoMode(scoreManager.getActiveMatchName());
+        socket.broadcast.emit('autoModeStarted');
+    });
 });
 
 redSocket.on('connection', (socket) => {
@@ -81,6 +108,8 @@ displaySocket.on('connection', (socket) => {
         }
     });
 
+    displayClients.push(socket);
+
     var matchData = {
         activeMatch: scoreManager.getActiveMatchName(),
         matchList: scoreManager.getMatchList()
@@ -99,6 +128,21 @@ function _sendMatchData(matchData, socket) {
     socket.emit('matchData', matchData);
 }
 
+function _broadcastModeTime(mode, timeString) {
+    for (var i = 0; i < adminClients.length; i++) {
+        adminClients[i].emit('timeRemaining', {
+            mode: mode,
+            timeRemaining: timeString
+        });
+    }
+}
+
+function _broadcastModeComplete(mode) {
+    for (var i = 0; i < adminClients.length; i++) {
+        adminClients[i].emit(mode + 'ModeFinished');
+    }
+}
+
 scoreManager.on('matchDataChanged', () => {
     var matchData = {
         activeMatch: scoreManager.getActiveMatchName(),
@@ -108,14 +152,21 @@ scoreManager.on('matchDataChanged', () => {
     _broadcastMatchData(matchData);
 });
 
+scoreManager.on('timeRemainingChanged', (mode, timeRemaining) => {
+    _broadcastModeTime(mode, timeRemaining);
+});
+
+scoreManager.on('modeComplete', (mode) => {
+    console.log('mode complete: ', mode);
+    _broadcastModeComplete(mode);
+})
+
 // TEST
 scoreManager.addMatch("Q1", ["red 1", "red 2"], ["blue 1", "blue 2"]);
 scoreManager.addMatch("Q2", ["red 1", "red 2"], ["blue 1", "blue 2"]);
 scoreManager.addMatch("Q3", ["red 1", "red 2"], ["blue 1", "blue 2"]);
 scoreManager.addMatch("Q4", ["red 1", "red 2"], ["blue 1", "blue 2"]);
 scoreManager.addMatch("Q5", ["red 1", "red 2"], ["blue 1", "blue 2"]);
-
-scoreManager.setActiveMatch('Q4');
 
 http.listen(3000, () => {
     console.log('Listening');

@@ -43,8 +43,12 @@ class ScoreManager extends EventEmitter {
             matchName: matchName,
             redTeams: redTeams,
             blueTeams: blueTeams,
-            redScore: 0,
-            blueScore: 0,
+            redAutoScore: 0,
+            redTeleopScore: 0,
+            redOtherScore: 0,
+            blueAutoScore: 0,
+            blueTeleopScore: 0,
+            blueOtherScore: 0,
             complete: false,
             active: false,
             scoreLog: []
@@ -86,14 +90,30 @@ class ScoreManager extends EventEmitter {
         var matchInfo = this.getMatchInfo(matchName);
         if (matchInfo) {
             return {
-                red: matchInfo.redScore,
-                blue: matchInfo.blueScore
+                red: {
+                    auto: matchInfo.redAutoScore,
+                    teleop: matchInfo.redTeleopScore,
+                    other: matchInfo.redOtherScore
+                },
+                blue: {
+                    auto: matchInfo.blueAutoScore,
+                    teleop: matchInfo.blueTeleopScore,
+                    other: matchInfo.blueOtherScore
+                },
             };
         }
 
         return {
-            red: 0,
-            blue: 0
+            red: {
+                auto: 0,
+                teleop: 0,
+                other: 0
+            },
+            blue: {
+                auto: 0,
+                teleop: 0,
+                other: 0
+            }
         };
     }
 
@@ -131,6 +151,47 @@ class ScoreManager extends EventEmitter {
                 this.emit('activeMatchChanged', matchName);
             }
         }
+    }
+
+    startMode(matchName, mode, time) {
+        var startTime = Date.now();
+        var modeTimer = setInterval(() => {
+            var currTime = Date.now();
+            if (currTime - startTime > time) {
+                // done
+                this.emit('timeRemainingChanged', mode, '00:00');
+                this.emit('modeComplete', mode);
+                clearInterval(modeTimer);
+            }
+            else {
+                var timeRemaining = time - (currTime - startTime);
+                var timeRemainingSec = Math.floor(timeRemaining / 1000);
+                var secondsPart = timeRemainingSec % 60;
+                var minutesPart = parseInt(timeRemainingSec / 60, 10);
+                
+                var timeString = '';
+                var minString = '';
+                var secString = '';
+                if (minutesPart < 10) {
+                    minString = '0' + minutesPart;
+                }
+                else {
+                    minString = minutesPart;
+                }
+
+                if (secondsPart < 10) {
+                    secString = '0' + secondsPart;
+                }
+                else {
+                    secString = secondsPart;
+                }
+
+                this.emit('timeRemainingChanged', mode, minString + ':' + secString);
+            }
+        }, 500);
+    }
+    startAutoMode(matchName) {
+         this.startMode(matchName, 'auto', 30000);
     }
 
     handleMatchComplete(matchName, complete) {

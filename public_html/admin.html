@@ -31,12 +31,10 @@
                 <div class="row bg-info">
                     <div class="col-sm-5">
                         <select id="match-selector" class="form-control">
-                            <option>NONE</option>
-                            <option>2</option>
                         </select>
                     </div>
                     <div class="col-sm-1">
-                        <button type="button" class="btn btn-primary">Select Match</button>
+                        <button id='match-selector-button' type="button" class="btn btn-primary">Activate Match</button>
                     </div>
                 </div>
                 <!-- Shown if the current match is NONE -->
@@ -47,11 +45,16 @@
                 <!-- Shown if the current match is selected -->
                 <div class="row bg-info" id="match-selected">
                     <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <h4 id="match-complated-label">Match Complete</h4>
-                                <!-- This should switch to red when the match is active -->
-                                <button id="active-match-button" type="button" class="btn btn-primary">Make Active Match</button>    
+                        <div class="row" style="margin-top: 15px">
+                            <div class="col-sm-1">
+                                <button id="match-auto-mode" class="btn">Autonomous</button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button id="match-teleop-mode" class="btn">Teleop</button>
+                            </div>
+                            <div class="col-sm-3">
+                                <span id="match-mode-time-label"></span>
+                                <span id="match-mode-time-remaining"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -64,6 +67,7 @@
                                                 <th>Team</th>
                                                 <th>Auto Score</th>
                                                 <th>Teleop Score</th>
+                                                <th>Total</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -71,11 +75,13 @@
                                                 <td class="red-team">Red Team</td>
                                                 <td id="red-auto-score">0</td>
                                                 <td id="red-teleop-score">0</td>
+                                                <td id="red-total-score">0</td>
                                             </tr>
                                             <tr>
                                                 <td class="blue-team">Blue Team</td>
                                                 <td id="blue-auto-score">0</td>
                                                 <td id="blue-teleop-score">0</td>
+                                                <td id="blue-total-score">0</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -83,9 +89,9 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="row">
-                                    <div id="scoreLog" class="col-sm-12">
+                                    <div class="col-sm-12">
                                         <h5>Score Log</h5>
-                                        <ul class="list-group" style="max-height: 100px; overflow-y: scroll">
+                                        <ul id="score-log" class="list-group" style="max-height: 100px; overflow-y: scroll">
                                             <li class="list-group-item">Hi</li>
                                             <li class="list-group-item">Hi</li>
                                             <li class="list-group-item">Hi</li>
@@ -118,7 +124,7 @@
                                     <div class="form-group">
                                         <input class="form-control" id="red-score-adjust-description" placeholder="Description">
                                     </div>
-                                    <button class="btn btn-danger">Adjust Red Score</button>
+                                    <button id="red-score-adjust-button" class="btn btn-danger">Adjust Red Score</button>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -130,7 +136,7 @@
                                     <div class="form-group">
                                         <input class="form-control" id="blue-score-adjust-description" placeholder="Description">
                                     </div>
-                                    <button class="btn btn-primary">Adjust Blue Score</button>
+                                    <button id="blue-score-adjust-button"  class="btn btn-primary">Adjust Blue Score</button>
                                 </div>
                             </div>
                         </div>
@@ -208,7 +214,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <button class="btn btn-primary">Upload</button>
+                        <button id="bulk-upload-button" class="btn btn-primary">Upload</button>
                     </div>
                 </div>
                 <div class="row" style="margin-bottom: 10px"></div>
@@ -224,5 +230,6 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     
+    <script src="js/admin.js"></script>
   </body>
 </html>

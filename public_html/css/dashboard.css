@@ -9,3 +9,8 @@
 .active-match {
     background-color: yellow !important;
 }
+
+.large-glyph {
+    font-size: 30px;
+    line-height: 60px;
+}

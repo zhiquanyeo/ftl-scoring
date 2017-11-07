@@ -50,12 +50,12 @@ app.get('/admin', (req, res) => {
 
 // Red Scoring
 app.get('/red', (req, res) => {
-
+    res.sendFile(__dirname + '/public_html/red.html');
 });
 
 // Blue Scoring
 app.get('/blue', (req, res) => {
-    
+    res.sendFile(__dirname + '/public_html/blue.html');
 });
 
 // Hook up socket.io connections
@@ -183,6 +183,20 @@ function _broadcastActiveMatchUpdated() {
     }
 }
 
+function _broadcastMatchScores(matchName, scores) {
+    for (var i = 0; i < matchClients.length; i++) {
+        matchClients[i].emit('matchScoreChanged', matchName, scores);
+    }
+
+    for (var i = 0; i < displayClients.length; i++) {
+        displayClients[i].emit('matchScoreChanged', matchName, scores);
+    }
+
+    for (var i = 0; i < adminClients.length; i++) {
+        adminClients[i].emit('matchScoreChanged', matchName, scores);
+    }
+}
+
 scoreManager.on('matchDataChanged', () => {
     var matchData = {
         activeMatch: scoreManager.getActiveMatchName(),
@@ -204,6 +218,18 @@ scoreManager.on('modeComplete', (mode) => {
 scoreManager.on('activeMatchChanged', (matchName) => {
     console.log('active: ', matchName)
     _broadcastActiveMatchUpdated();
+});
+
+scoreManager.on('matchScoreChanged', (matchName, score) => {
+    _broadcastMatchScores(matchName, score);
+
+    // Also update dashboard
+    var matchData = {
+        activeMatch: scoreManager.getActiveMatchName(),
+        matchList: scoreManager.getMatchList()
+    }
+
+    _broadcastMatchData(matchData);
 })
 
 // TEST

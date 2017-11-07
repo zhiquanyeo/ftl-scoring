@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Scoring Panel</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 id="match-header" class="page-header">Match: </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <h2 style="text-align: center;background-color: blue; color: white">BLUE TEAM</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <h4 id="scorer-id">Scorer ID: </h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h3>Autonomous</h3>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <h4 id="team-1">Team 1</h4>
+                    </div>
+                    <div class="col-xs-2">
+                        <span>None</span>
+                        <span id="team-1-auto-none" class="large-glyph glyphicon glyphicon-remove"></span>
+                    </div>
+                    <div class="col-xs-2">
+                        <span>Baseline</span>
+                        <span id="team-1-auto-baseline" class="large-glyph glyphicon glyphicon-ok"></span>
+                    </div>
+                    <div class="col-xs-2">
+                        <span>Penalty</span>
+                        <span id="team-1-auto-penalty" class="large-glyph glyphicon glyphicon-ok"></span>
+                    </div>
+                    <div class="col-xs-2">
+                        <span>Goal</span>
+                        <span id="team-1-auto-goal" class="large-glyph glyphicon glyphicon-ok"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <h4 id="team-2">Team 2</h4>
+                    </div>
+                    <div class="col-xs-2">
+                        <span>None</span>
+                        <span id="team-2-auto-none" class="large-glyph glyphicon glyphicon-remove"></span>
+                    </div>
+                    <div class="col-xs-2">
+                        <span>Baseline</span>
+                        <span id="team-2-auto-baseline" class="large-glyph glyphicon glyphicon-ok"></span>
+                    </div>
+                    <div class="col-xs-2">
+                        <span>Penalty</span>
+                        <span id="team-2-auto-penalty" class="large-glyph glyphicon glyphicon-ok"></span>
+                    </div>
+                    <div class="col-xs-2">
+                        <span>Goal</span>
+                        <span id="team-2-auto-goal" class="large-glyph glyphicon glyphicon-ok"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 30px">
+            <div class="col-xs-12">
+                <h3>Teleop</h3>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <button id="goal-button" style="height: 150px" class="btn btn-success btn-lg btn-block">GOAL</button>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 25px">
+                    <div class="col-xs-5">
+                            <button id="foul-button" style="height: 80px" class="btn btn-warning btn-lg btn-block">FOUL</button>
+                    </div>
+                    <div class="col-xs-5 col-xs-offset-2">
+                            <button id="tech-foul-button" style="height: 80px" class="btn btn-danger btn-lg btn-block">TECH FOUL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script>var SCORER_SIDE = 'blue';</script>
+    <script src="js/scorer.js"></script>
+  </body>
+</html>

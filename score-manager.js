@@ -13,6 +13,18 @@ class ScoreManager extends EventEmitter {
 
         this.d_currentMatchRedScore = 0;
         this.d_currentMatchBlueScore = 0;
+
+        this.d_currentMatchRedScores = {
+            auto: {},
+            teleop: 0,
+            penalties: 0
+        };
+
+        this.d_currentMatchBlueScores = {
+            auto: {},
+            teleop: 0,
+            penalties: 0
+        };
     }
 
     registerScorer(team, scorerId, socket) {
@@ -33,9 +45,113 @@ class ScoreManager extends EventEmitter {
         socket.emit('scorerRegistration', scorerId);
 
         // Hook up events
-        socket.on('score', (scoreData) => {
+        socket.on('autoScore', (autoScoreData) => {
+            var activeMatchInfo = this.getMatchInfo(this.getActiveMatchName());
+            if (!activeMatchInfo) {
+                return;
+            }
+            
+            if (team === 'red') {
+                this.d_currentMatchRedScores.auto = autoScoreData;
+                var redScore = 0;
+                if (autoScoreData.team1.baseline) {
+                    redScore += 1;
+                }
+                if (autoScoreData.team1.penalty) {
+                    redScore += 3;
+                }
+                if (autoScoreData.team1.goal) {
+                    redScore += 5;
+                }
+                if (autoScoreData.team2.baseline) {
+                    redScore += 1;
+                }
+                if (autoScoreData.team2.penalty) {
+                    redScore += 3;
+                }
+                if (autoScoreData.team2.goal) {
+                    redScore += 5;
+                }
 
+                activeMatchInfo.redAutoScore = redScore;
+            }
+            else {
+                this.d_currentMatchBlueScores.auto = autoScoreData;
+                var blueScore = 0;
+                if (autoScoreData.team1.baseline) {
+                    blueScore += 1;
+                }
+                if (autoScoreData.team1.penalty) {
+                    blueScore += 3;
+                }
+                if (autoScoreData.team1.goal) {
+                    blueScore += 5;
+                }
+                if (autoScoreData.team2.baseline) {
+                    blueScore += 1;
+                }
+                if (autoScoreData.team2.penalty) {
+                    blueScore += 3;
+                }
+                if (autoScoreData.team2.goal) {
+                    blueScore += 5;
+                }
+
+                activeMatchInfo.blueAutoScore = blueScore;
+            }
+
+            this.emit('matchScoreChanged', activeMatchInfo.matchName, this.getMatchScore(activeMatchInfo.matchName));
+            socket.broadcast.emit('autoScoreChanged', autoScoreData);
         });
+
+        socket.on('teleopPoint', (pointVal) => {
+            var activeMatchInfo = this.getMatchInfo(this.getActiveMatchName());
+            if (!activeMatchInfo) {
+                return;
+            }
+
+            if (team === 'red') {
+                activeMatchInfo.redTeleopScore += pointVal;
+            }
+            else {
+                activeMatchInfo.blueTeleopScore += pointVal;
+            }
+
+            this.emit('matchScoreChanged', activeMatchInfo.matchName, this.getMatchScore(activeMatchInfo.matchName));
+        });
+
+        socket.on('foulPoint', (pointVal) => {
+            var activeMatchInfo = this.getMatchInfo(this.getActiveMatchName());
+            if (!activeMatchInfo) {
+                return;
+            }
+
+            if (team === 'red') {
+                activeMatchInfo.redFouls += pointVal;
+            }
+            else {
+                activeMatchInfo.blueFouls += pointVal;
+            }
+
+            this.emit('matchScoreChanged', activeMatchInfo.matchName, this.getMatchScore(activeMatchInfo.matchName));
+        });
+
+        socket.on('techFoulPoint', (pointVal) => {
+            var activeMatchInfo = this.getMatchInfo(this.getActiveMatchName());
+            if (!activeMatchInfo) {
+                return;
+            }
+
+            if (team === 'red') {
+                activeMatchInfo.redTechFouls += pointVal;
+            }
+            else {
+                activeMatchInfo.blueTechFouls += pointVal;
+            }
+
+            this.emit('matchScoreChanged', activeMatchInfo.matchName, this.getMatchScore(activeMatchInfo.matchName));
+        });
+
     }
 
     addMatch(matchName, redTeams, blueTeams) {
@@ -46,9 +162,13 @@ class ScoreManager extends EventEmitter {
             redAutoScore: 0,
             redTeleopScore: 0,
             redOtherScore: 0,
+            redFouls: 0, // points given to other team
+            redTechFouls: 0, //points given to other team
             blueAutoScore: 0,
             blueTeleopScore: 0,
             blueOtherScore: 0,
+            blueFouls: 0, //points given to other team
+            blueTechFouls: 0, //points given to other team
             autoComplete: false,
             teleopComplete: false,
             complete: false,
@@ -219,7 +339,11 @@ class ScoreManager extends EventEmitter {
 
     }
 
-    handleScoreUpdate(matchName, team, score) {
+    handleAutoScoreUpdate(matchName, team, score) {
+
+    }
+
+    handleTeleopScoreUpdate(matchName, team, score) {
 
     }
 };

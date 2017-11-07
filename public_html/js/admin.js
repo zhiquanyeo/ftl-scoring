@@ -116,8 +116,7 @@ function _activateMatch(matchName) {
 
     noMatchSelectedView.style.display = 'none';
     matchInfoView.style.display = 'block';
-
-    console.log(matchInfo);
+    
     if (matchInfo.autoComplete) {
         matchAutoModeButton.disabled = true;
         matchAutoModeButton.classList.add('btn-danger');
@@ -201,6 +200,7 @@ function _loadMatches(matchData) {
     //activeMatch, matchList
     var matchList = matchData.matchList;
 
+    _clearMatchInfo();
     _clearMatchSelector();
     _clearMatchList();
 
@@ -313,7 +313,6 @@ socket.on('timeRemaining', function(timeRemainData) {
 });
 
 socket.on('autoModeFinished', function () {
-    console.log('hi');
     matchAutoModeButton.classList.remove('btn-success');
     matchAutoModeButton.classList.add('btn-danger');
     matchModeLabel.innerHTML = '';

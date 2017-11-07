@@ -23,7 +23,7 @@ var team2AutoBaseline = document.getElementById('team-2-auto-baseline');
 var team2AutoPenalty = document.getElementById('team-2-auto-penalty');
 var team2AutoGoal = document.getElementById('team-2-auto-goal');
 
-var goalButton = document.getElementById('boal-button');
+var goalButton = document.getElementById('goal-button');
 var foulButton = document.getElementById('foul-button');
 var techFoulButton = document.getElementById('tech-foul-button');
 

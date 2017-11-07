@@ -49,6 +49,8 @@ class ScoreManager extends EventEmitter {
             blueAutoScore: 0,
             blueTeleopScore: 0,
             blueOtherScore: 0,
+            autoComplete: false,
+            teleopComplete: false,
             complete: false,
             active: false,
             scoreLog: []
@@ -159,8 +161,23 @@ class ScoreManager extends EventEmitter {
             var currTime = Date.now();
             if (currTime - startTime > time) {
                 // done
+                var matchInfo = this.getMatchInfo(matchName);
+                if (mode === 'auto') {
+                    matchInfo.autoComplete = true;
+                }
+                else {
+                    matchInfo.teleopComplete = true;
+                }
                 this.emit('timeRemainingChanged', mode, '00:00');
                 this.emit('modeComplete', mode);
+
+                if (mode === 'auto') {
+                    matchInfo.autoComplete = true;
+                }
+                else {
+                    matchInfo.teleopComplete = true;
+                }
+
                 clearInterval(modeTimer);
             }
             else {
@@ -186,12 +203,16 @@ class ScoreManager extends EventEmitter {
                     secString = secondsPart;
                 }
 
-                this.emit('timeRemainingChanged', mode, minString + ':' + secString);
+                this.emit('timeRemainingChanged', mode, minString + ':' + secString, timeRemainingSec);
             }
         }, 500);
     }
     startAutoMode(matchName) {
          this.startMode(matchName, 'auto', 30000);
+    }
+
+    startTeleopMode(matchName) {
+        this.startMode(matchName, 'teleop', 180000);
     }
 
     handleMatchComplete(matchName, complete) {

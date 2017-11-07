@@ -22,6 +22,7 @@ var matchSocket = io.of(MATCH_CHANNEL);
 
 var displayClients = [];
 var adminClients = [];
+var matchClients = [];
 
 // TODO Read in configuration from DB?
 
@@ -39,7 +40,7 @@ app.get('/', (req, res) => {
 
 // File for active match display
 app.get('/match', (req, res) => {
-
+    res.sendFile(__dirname + '/public_html/matchstatus.html');
 });
 
 // Admin screen
@@ -86,6 +87,11 @@ adminSocket.on('connection', (socket) => {
         scoreManager.startAutoMode(scoreManager.getActiveMatchName());
         socket.broadcast.emit('autoModeStarted');
     });
+
+    socket.on('teleopModeStarted', () => {
+        scoreManager.startTeleopMode(scoreManager.getActiveMatchName());
+        socket.broadcast.emit('teleopModeStarted');
+    })
 });
 
 redSocket.on('connection', (socket) => {
@@ -118,6 +124,24 @@ displaySocket.on('connection', (socket) => {
     _sendMatchData(matchData, socket);
 });
 
+matchSocket.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+        for (var i = 0; i < matchClients.length; i++) {
+            if (matchClients[i] === socket)  {
+                matchClients.splice(i, 1);
+                break;
+            }
+        }
+    });
+
+    matchClients.push(socket);
+
+    if (scoreManager.getActiveMatch()) {
+        // We have an active match, send the active match change
+        socket.emit('activeMatchChanged', scoreManager.getActiveMatch());
+    }
+})
+
 function _broadcastMatchData(matchData) {
     for (var i = 0; i < displayClients.length; i++) {
         _sendMatchData(matchData, displayClients[i]);
@@ -128,18 +152,34 @@ function _sendMatchData(matchData, socket) {
     socket.emit('matchData', matchData);
 }
 
-function _broadcastModeTime(mode, timeString) {
+function _broadcastModeTime(mode, timeString, timeSeconds) {
     for (var i = 0; i < adminClients.length; i++) {
         adminClients[i].emit('timeRemaining', {
             mode: mode,
             timeRemaining: timeString
         });
+
+        matchClients[i].emit('timeRemaining', {
+            mode: mode,
+            timeRemaining: timeString,
+            timeRemainingSeconds: timeSeconds
+        })
     }
 }
 
 function _broadcastModeComplete(mode) {
     for (var i = 0; i < adminClients.length; i++) {
         adminClients[i].emit(mode + 'ModeFinished');
+    }
+
+    for (var i = 0; i < matchClients.length; i++) {
+        matchClients[i].emit(mode + 'ModeFinished');
+    }
+}
+
+function _broadcastActiveMatchUpdated() {
+    for (var i = 0; i < matchClients.length; i++) {
+        matchClients[i].emit('activeMatchChanged', scoreManager.getActiveMatch());
     }
 }
 
@@ -152,13 +192,18 @@ scoreManager.on('matchDataChanged', () => {
     _broadcastMatchData(matchData);
 });
 
-scoreManager.on('timeRemainingChanged', (mode, timeRemaining) => {
-    _broadcastModeTime(mode, timeRemaining);
+scoreManager.on('timeRemainingChanged', (mode, timeRemaining, timeSeconds) => {
+    _broadcastModeTime(mode, timeRemaining, timeSeconds);
 });
 
 scoreManager.on('modeComplete', (mode) => {
     console.log('mode complete: ', mode);
     _broadcastModeComplete(mode);
+});
+
+scoreManager.on('activeMatchChanged', (matchName) => {
+    console.log('active: ', matchName)
+    _broadcastActiveMatchUpdated();
 })
 
 // TEST

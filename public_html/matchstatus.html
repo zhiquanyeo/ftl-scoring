@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Scoring Dashboard</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="page-header" style="text-align: center">Robo-Lexington Cup</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h2 id="match-header" style="text-align: center">Match: </h2>
+            </div>
+        </div>
+        <div class="row">
+            <!-- red-->
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3 id="red-team-1" class="red-team" style="text-align: center">Red 1</h3>
+                                <h3 id="red-team-2" class="red-team" style="text-align: center">Red 2</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- timer and score -->
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="progress" style="height: 40px; position: relative;">
+                        <div id="match-progress" class="progress-bar progress-bar-success" role="progressbar" style="width: 50%">
+                        </div>
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; text-align: center">
+                            <h2 id="match-time-remaining" style="line-height: 0px">210</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6" style="background-color: red; color: white;">
+                        <h1 id="red-score" style="text-align: center">0</h1>
+                    </div>
+                    <div class="col-sm-6" style="background-color: blue; color: white;">
+                        <h1 id="blue-score" style="text-align: center">0</h1>
+                    </div>
+                </div>
+            </div>
+            <!-- Blue -->
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3 id="blue-team-1" class="blue-team" style="text-align: center">Blue 1</h3>
+                                <h3 id="blue-team-2" class="blue-team" style="text-align: center">Blue 2</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script src="js/match.js"></script>
+  </body>
+</html>

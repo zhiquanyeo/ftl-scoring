@@ -117,6 +117,17 @@ function _activateMatch(matchName) {
     noMatchSelectedView.style.display = 'none';
     matchInfoView.style.display = 'block';
 
+    console.log(matchInfo);
+    if (matchInfo.autoComplete) {
+        matchAutoModeButton.disabled = true;
+        matchAutoModeButton.classList.add('btn-danger');
+    }
+
+    if (matchInfo.teleopComplete) {
+        matchTeleopModeButton.disabled = true;
+        matchTeleopModeButton.classList.add('btn-danger');
+    }
+
     selectedMatch = matchName;
 }
 
@@ -289,6 +300,16 @@ socket.on('matchActivated', function(matchName) {
 
 socket.on('timeRemaining', function(timeRemainData) {
     matchModeTimeRemaining.innerHTML = timeRemainData.timeRemaining;
+    if (timeRemainData.mode === 'auto') {
+        matchModeLabel.innerHTML = 'Autonomous Mode Time Remaining: ';
+        matchAutoModeButton.disabled = true;
+        matchAutoModeButton.classList.add('btn-success');
+    }
+    else {
+        matchModeLabel.innerHTML = 'Teleop Mode Time Remianing: ';
+        matchTeleopModeButton.disabled = true;
+        matchTeleopModeButton.classList.add('btn-success');
+    }
 });
 
 socket.on('autoModeFinished', function () {
